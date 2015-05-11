@@ -1,4 +1,5 @@
 from flask import Flask
+from flask import render_template
 import os
 import time
 import yql
@@ -20,7 +21,13 @@ SYMBOLS = ["YHOO", "AAPL", "GOOG","MSFT", "AMZN", "ADBE", "BIDU", "FB", "NVDA", 
 
 @app.route("/")
 def hello():
-    return "Hello World!"
+    DATA=      [
+['Mon', 20, 28, 38, 45],
+      ['Tue', 31, 38, 55, 66],
+      ['Wed', 50, 55, 77, 80],
+      ['Thu', 77, 77, 66, 50],
+      ['Fri', 68, 66, 22, 15]]
+    return render_template('main_view.html', symbols=SYMBOLS, data=DATA)
 
 def get_stock_data():
     print "Process getting stock data started" 

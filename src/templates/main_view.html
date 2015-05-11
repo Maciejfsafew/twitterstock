@@ -1,0 +1,43 @@
+<html>
+  <head>
+    <title>TwitterStock</title>
+    <h1>TwitterStock</h1>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      google.load("visualization", "1", {packages:["corechart"]});
+google.setOnLoadCallback(drawChart);
+  function drawChart() {
+    var data = google.visualization.arrayToDataTable([
+      {% for label, a,b,c,d in data %}
+        ['{{label}}',{{a}},{{b}},{{c}},{{d}}],
+      {% endfor %}
+    ], true);
+
+    var options = {
+      legend:'none'
+    };
+
+    var chart = new google.visualization.CandlestickChart(document.getElementById('chart_div'));
+
+    chart.draw(data, options);
+  }
+    </script>
+  </head>
+  <body>
+
+    <table style="width:100%">
+      <tr>
+        <td>
+          <form action="">
+            {% for symbol in symbols %}
+              <input type="radio" name="sex" value="{{symbol}}">{{symbol}}<br>
+            {% endfor %}
+          </form>
+        </td>
+        <td>
+          <div id="chart_div" style="width: 900px; height: 500px;"></div>
+        </td>
+      </tr>
+    </table> 
+  </body>
+</html>
