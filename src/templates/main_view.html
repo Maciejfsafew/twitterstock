@@ -2,6 +2,7 @@
   <head>
     <title>TwitterStock</title>
     <h1>TwitterStock</h1>
+
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript">
       google.load("visualization", "1", {packages:["corechart"]});
@@ -20,6 +21,24 @@ google.setOnLoadCallback(drawChart);
     var chart = new google.visualization.CandlestickChart(document.getElementById('chart_div'));
 
     chart.draw(data, options);
+
+    var data2 = google.visualization.arrayToDataTable([
+          ['Date', 'Avg4', 'Variance'],
+          {% for label, a,b in metrics %}
+           ['{{label}}',{{a}},{{b}}],
+          {% endfor %}
+        ]);
+
+    var options2 = {
+          title: 'Metrics',
+          curveType: 'function',
+          legend: { position: 'bottom' }
+        };
+
+    var chart2 = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+    chart2.draw(data2, options2);
+
   }
     </script>
   </head>
@@ -28,14 +47,21 @@ google.setOnLoadCallback(drawChart);
     <table style="width:100%">
       <tr>
         <td>
-          <form action="">
-            {% for symbol in symbols %}
-              <input type="radio" name="sex" value="{{symbol}}">{{symbol}}<br>
+          <form action="" method="POST">
+            {% for value in symbols %}
+              {% if value == symbol %}
+                 <input type="radio" checked="checked" name="symbol" value="{{value}}">{{value}}<br>
+              {% else %}
+                 <input type="radio" name="symbol" value="{{value}}">{{value}}<br>
+              {% endif %}
             {% endfor %}
+            <input type="submit" value="Reload" >
           </form>
         </td>
         <td>
+          <h1>{{ symbol }}</h1>
           <div id="chart_div" style="width: 900px; height: 500px;"></div>
+          <div id="curve_chart" style="width: 900px; height: 300px"></div>
         </td>
       </tr>
     </table> 
