@@ -1,18 +1,10 @@
 from flask import Flask
 from flask import render_template
 from flask import request
-import os
 import time
-import tweepy
 from multiprocessing import Process
 from yahoo_finance import Share
-
-
-TWITTER_CONSUMER_KEY = os.environ["TWITTER_CONSUMER_KEY"]
-TWITTER_CONSUMER_SECRET = os.environ["TWITTER_CONSUMER_SECRET"]
-TWITTER_ACCESS_TOKEN = os.environ["TWITTER_ACCESS_TOKEN"]
-TWITTER_ACCESS_TOKEN_SECRET = os.environ["TWITTER_ACCESS_TOKEN_SECRET"]
-
+import twitter_manager
 
 app = Flask(__name__)
 
@@ -45,7 +37,7 @@ def hello():
 
 def get_twitter_data():
     print "Process getting twitter data started"
-
+    twitter_manager.start_listening()
 
 if __name__ == "__main__":
     twitter = Process(target=get_twitter_data)
