@@ -8,11 +8,20 @@ import twitter_manager
 
 app = Flask(__name__)
 
-SYMBOLS = ["YHOO", "AAPL", "GOOG","MSFT", "AMZN", "ADBE", "BIDU", "FB", "NVDA", "EBAY", "INTC"]
+SYMBOLS = []
+def init():
+    with open("../symbol_list") as symbols_file:
+        symbols = symbols_file.readlines()
+    for symbol in symbols:
+        SYMBOLS.append(symbol.strip('\r\n'))
+
 SYMBOL = "YHOO"
 
 @app.route("/", methods=['POST', 'GET'])
 def hello():
+    if not len(SYMBOLS):
+        init()
+        print SYMBOLS
     SB = SYMBOL    
     if request.method == 'POST':
         sym = request.form['symbol']
