@@ -5,6 +5,7 @@ from tweepy.streaming import StreamListener
 import json
 import database_manager
 
+symbols = None
 
 class Listener(StreamListener):
     def on_data(self, data):
@@ -18,12 +19,21 @@ class Listener(StreamListener):
 def parse_tweet(json_tweet):
     tweet = json.loads(json_tweet)
     if tweet.get('text') is not None:
-        # TODO: add checking of what company tweet is saying
-        database_manager.insert_tweet("AAPL", tweet['text'])
-        print "tweet\n"
+        tweet_text = tweet['text']
+        company_symbol = get_company(tweet_text)
+        if company_symbol is not None:
+            database_manager.insert_tweet(company_symbol, tweet_text)
+
+
+def get_company(tweet):
+    for keyword in KEYWORDS:
+        if keyword in tweet.upper():
+            return keyword[1:]
+    return None
 
 
 def read_tags():
+    global symbols
     with open("../stocks_list") as symbols_file:
         lines = symbols_file.readlines()
     lines = [line.strip('\n') for line in lines]
@@ -43,7 +53,6 @@ def start_listening():
     auth.set_access_token(properties.twitter_access_token, properties.twitter_access_token_secret)
 
     twitter_stream = Stream(auth, Listener())
-    twitter_stream.filter(track=SYMBOLS)
+    twitter_stream.filter(track=KEYWORDS)
 
-
-SYMBOLS = read_tags()
+KEYWORDS = read_tags()
