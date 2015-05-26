@@ -4,6 +4,8 @@ from tweepy import OAuthHandler
 from tweepy.streaming import StreamListener
 import json
 import database_manager
+import datetime
+from collections import defaultdict
 
 symbols = None
 
@@ -31,6 +33,18 @@ def get_companies(tweet):
         if keyword in tweet.upper():
             companies.append(keyword[1:])
     return companies
+
+
+def get_tweets_in_periods(company_symbol, start_date, end_date):
+    results = database_manager.get_tweets_for_company(company_symbol, start_date, end_date)
+    act_date = start_date + datetime.timedelta(minutes=15)
+    buckets = defaultdict(lambda: 0)
+    for tweet in results:
+        if tweet[2] < act_date:
+            buckets[act_date.strftime("%d %B %Y %H:%M")] += 1
+        else:
+            act_date += datetime.timedelta(minutes=15)
+    return buckets.items()
 
 
 def read_tags():

@@ -1,0 +1,50 @@
+<html>
+  <head>
+    <title>TwitterStock</title>
+    <h1>TwitterStock</h1>
+
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      google.load("visualization", "1", {packages:["corechart"]});
+google.setOnLoadCallback(drawChart);
+  function drawChart() {
+    var data = google.visualization.arrayToDataTable([
+      {% for label, a in data %}
+        ['{{label}}',{{a}}],
+      {% endfor %}
+    ], true);
+
+    var options = {
+      legend:'none'
+    };
+
+    var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+
+    chart.draw(data, options);
+
+  }
+    </script>
+  </head>
+  <body>
+
+    <table style="width:100%">
+      <tr>
+        <td>
+          <form action="" method="POST">
+            <select name="symbol">
+              {% for value in symbols %}
+                 <option  name="symbol" value="{{value}}">{{value}}</option>
+              {% endfor %}
+              <input type="submit" value="Reload" >
+            </select>
+          </form>
+        </td>
+        <td>
+          <h1>{{ symbol }}</h1>
+          <div id="chart_div" style="width: 900px; height: 500px;"></div>
+          <!--<div id="curve_chart" style="width: 900px; height: 300px"></div>-->
+        </td>
+      </tr>
+    </table> 
+  </body>
+</html>

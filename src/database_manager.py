@@ -7,6 +7,10 @@ con = connect(dbname="twitterstock", user="postgres", host="localhost", password
 cur = con.cursor()
 
 
+def get_company_id(company_symbol):
+    cur.execute('SELECT company_id FROM "Companies" WHERE company_symbol = %s', (company_symbol,))
+    return cur.fetchone()[0]
+
 def insert_company(company_symbol, company_name):
     """
     Inserts into DB company info if that company does not exist already.
@@ -26,11 +30,17 @@ def insert_tweet(company_symbol, tweet_text):
     :param company_symbol: Symbol of company which of tweet is saying
     :param tweet_text: content of tweet
     """
-    cur.execute('SELECT company_id FROM "Companies" WHERE company_symbol = %s', (company_symbol,))
-    company_id = cur.fetchone()[0]
+    company_id = get_company_id(company_symbol)
     cur.execute('INSERT INTO "Tweets"(company_id, time, text) VALUES(%s, %s, %s)',
                 (company_id, datetime.datetime.now(), tweet_text))
     con.commit()
+
+
+def get_tweets_for_company(company_symbol, start_date, end_date):
+    company_id = get_company_id(company_symbol)
+    cur.execute('SELECT * FROM "Tweets" WHERE company_id = %s AND time BETWEEN %s AND %s',
+                (company_id, start_date, end_date))
+    return cur.fetchall()
 
 
 def close_connection():
