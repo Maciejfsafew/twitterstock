@@ -20,16 +20,17 @@ def parse_tweet(json_tweet):
     tweet = json.loads(json_tweet)
     if tweet.get('text') is not None:
         tweet_text = tweet['text']
-        company_symbol = get_company(tweet_text)
-        if company_symbol is not None:
+        companies_symbols = get_companies(tweet_text)
+        for company_symbol in companies_symbols:
             database_manager.insert_tweet(company_symbol, tweet_text)
 
 
-def get_company(tweet):
+def get_companies(tweet):
+    companies = []
     for keyword in KEYWORDS:
         if keyword in tweet.upper():
-            return keyword[1:]
-    return None
+            companies.append(keyword[1:])
+    return companies
 
 
 def read_tags():
