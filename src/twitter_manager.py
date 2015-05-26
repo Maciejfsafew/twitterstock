@@ -17,9 +17,10 @@ class Listener(StreamListener):
 
 def parse_tweet(json_tweet):
     tweet = json.loads(json_tweet)
-    if tweet.get('text') != None:
-        print tweet['text']
-        print "\n"
+    if tweet.get('text') is not None:
+        # TODO: add checking of what company tweet is saying
+        database_manager.insert_tweet("AAPL", tweet['text'])
+        print "tweet\n"
 
 
 def read_tags():
@@ -37,10 +38,12 @@ def read_tags():
 
 
 def start_listening():
-    SYMBOLS = read_tags()
 
     auth = OAuthHandler(properties.twitter_key, properties.twitter_secret)
     auth.set_access_token(properties.twitter_access_token, properties.twitter_access_token_secret)
 
-    twitterStream = Stream(auth, Listener())
-    twitterStream.filter(track=SYMBOLS)
+    twitter_stream = Stream(auth, Listener())
+    twitter_stream.filter(track=SYMBOLS)
+
+
+SYMBOLS = read_tags()
