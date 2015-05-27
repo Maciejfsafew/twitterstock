@@ -1,8 +1,12 @@
 from psycopg2 import connect
 import datetime
+import properties
 
 con = None
-con = connect(dbname="twitterstock", user="postgres", host="localhost", password="admin")
+con = connect(dbname=properties.db_name,
+              user=properties.db_username,
+              host=properties.db_host,
+              password=properties.db_password)
 
 cur = con.cursor()
 

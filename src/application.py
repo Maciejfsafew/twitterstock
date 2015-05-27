@@ -26,7 +26,6 @@ SYMBOL = "YHOO"
 def hello():
     if not len(SYMBOLS):
         init()
-        print SYMBOLS
     SB = SYMBOL    
     if request.method == 'POST':
         sym = request.form['symbol']
@@ -54,7 +53,6 @@ def hello():
 def show_tweets():
     if not len(SYMBOLS):
         init()
-        print SYMBOLS
     SB = "AAPL"
     start_date = datetime.datetime(2015, 5, 26, 22)
     end_date = datetime.datetime(2015, 5, 27)
@@ -70,7 +68,6 @@ def show_tweets():
             end_date = datetime.datetime(date_values[2], date_values[0], date_values[1], 22)
     COMPANY_NAME = database_manager.get_company_name(SB)
     DATA = twitter_manager.get_tweets_in_periods(SB, start_date, end_date)
-    print DATA
     return render_template('tweet_view.html', symbols=SYMBOLS, data=DATA, symbol=SB, company_name=COMPANY_NAME,
                            date=DATE)
 
