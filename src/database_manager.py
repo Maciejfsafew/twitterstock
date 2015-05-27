@@ -43,6 +43,11 @@ def get_tweets_for_company(company_symbol, start_date, end_date):
     return cur.fetchall()
 
 
+def get_company_name(company_symbol):
+    cur.execute('SELECT company_name FROM "Companies" WHERE company_symbol = %s', (company_symbol,))
+    return cur.fetchone()[0]
+
+
 def close_connection():
     cur.close()
     con.close()

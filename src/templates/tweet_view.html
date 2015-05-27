@@ -2,9 +2,14 @@
   <head>
     <title>TwitterStock</title>
     <h1>TwitterStock</h1>
-
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript">
+        $(function() {
+            $("#datepicker").datepicker();
+        });
       google.load("visualization", "1", {packages:["corechart"]});
 google.setOnLoadCallback(drawChart);
   function drawChart() {
@@ -31,16 +36,21 @@ google.setOnLoadCallback(drawChart);
       <tr>
         <td>
           <form action="" method="POST">
+              <p>Date: <input type="text" id="datepicker" name="date" value="{{ date }}"></p>
             <select name="symbol">
               {% for value in symbols %}
+                {% if value == symbol %}
+                 <option selected="{{value}}"  name="symbol" value="{{value}}">{{value}}</option>
+                {% else %}
                  <option  name="symbol" value="{{value}}">{{value}}</option>
+                {% endif %}
               {% endfor %}
               <input type="submit" value="Reload" >
             </select>
           </form>
         </td>
         <td>
-          <h1>{{ symbol }}</h1>
+          <h1>{{ symbol }} - {{ company_name }}</h1>
           <div id="chart_div" style="width: 900px; height: 500px;"></div>
           <!--<div id="curve_chart" style="width: 900px; height: 300px"></div>-->
         </td>

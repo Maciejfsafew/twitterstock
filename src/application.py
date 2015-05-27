@@ -6,6 +6,7 @@ from multiprocessing import Process
 from yahoo_finance import Share
 import twitter_manager
 import datetime
+import database_manager
 
 app = Flask(__name__)
 app.config.update(
@@ -55,14 +56,23 @@ def show_tweets():
         init()
         print SYMBOLS
     SB = "AAPL"
+    start_date = datetime.datetime(2015, 5, 26, 22)
+    end_date = datetime.datetime(2015, 5, 27)
+    DATE = ""
     if request.method == 'POST':
         sym = request.form['symbol']
         if sym in SYMBOLS:
             SB = sym
-    # TODO: pass not hardcoded date
-    DATA = twitter_manager.get_tweets_in_periods(SB, datetime.datetime(2015, 5, 26, 22), datetime.datetime(2015, 5, 27))
+        DATE = request.form['date']
+        if DATE != "":
+            date_values = map(lambda x: int(x), DATE.split("/"))
+            start_date = datetime.datetime(date_values[2], date_values[0], date_values[1], 14, 30)
+            end_date = datetime.datetime(date_values[2], date_values[0], date_values[1], 22)
+    COMPANY_NAME = database_manager.get_company_name(SB)
+    DATA = twitter_manager.get_tweets_in_periods(SB, start_date, end_date)
     print DATA
-    return render_template('tweet_view.html', symbols=SYMBOLS, data=DATA, symbol=SB)
+    return render_template('tweet_view.html', symbols=SYMBOLS, data=DATA, symbol=SB, company_name=COMPANY_NAME,
+                           date=DATE)
 
 def get_twitter_data():
     print "Process getting twitter data started"
