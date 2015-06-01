@@ -7,13 +7,17 @@ con = connect(dbname=properties.db_name,
               user=properties.db_username,
               host=properties.db_host,
               password=properties.db_password)
+con_read = connect(dbname=properties.db_name,
+              user=properties.db_username,
+              host=properties.db_host,
+              password=properties.db_password)
 
 cur = con.cursor()
-
+cur_read = con_read.cursor()
 
 def get_company_id(company_symbol):
-    cur.execute('SELECT company_id FROM "Companies" WHERE company_symbol = %s', (company_symbol,))
-    return cur.fetchone()[0]
+    cur_read.execute('SELECT company_id FROM "Companies" WHERE company_symbol = %s', (company_symbol,))
+    return cur_read.fetchone()[0]
 
 def insert_company(company_symbol, company_name):
     """
@@ -42,14 +46,14 @@ def insert_tweet(company_symbol, tweet_text):
 
 def get_tweets_for_company(company_symbol, start_date, end_date):
     company_id = get_company_id(company_symbol)
-    cur.execute('SELECT * FROM "Tweets" WHERE company_id = %s AND time BETWEEN %s AND %s',
+    cur_read.execute('SELECT * FROM "Tweets" WHERE company_id = %s AND time BETWEEN %s AND %s',
                 (company_id, start_date, end_date))
-    return cur.fetchall()
+    return cur_read.fetchall()
 
 
 def get_company_name(company_symbol):
-    cur.execute('SELECT company_name FROM "Companies" WHERE company_symbol = %s', (company_symbol,))
-    return cur.fetchone()[0]
+    cur_read.execute('SELECT company_name FROM "Companies" WHERE company_symbol = %s', (company_symbol,))
+    return cur_read.fetchone()[0]
 
 
 def close_connection():

@@ -78,5 +78,5 @@ def get_twitter_data():
 if __name__ == "__main__":
     twitter = Process(target=get_twitter_data)
     twitter.start()
-    
+    app.debug=True 
     app.run(host= '0.0.0.0')
