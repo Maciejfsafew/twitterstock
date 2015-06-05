@@ -5,6 +5,7 @@ import time
 from multiprocessing import Process
 from yahoo_finance import Share
 import twitter_manager
+import yahoo_manager
 import datetime
 import database_manager
 
@@ -15,17 +16,19 @@ app.config.update(
 
 SYMBOLS = []
 def init():
+    symbols = []
     with open("../symbol_list") as symbols_file:
-        symbols = symbols_file.readlines()
-    for symbol in symbols:
-        SYMBOLS.append(symbol.strip('\r\n'))
+        read_symbols = symbols_file.readlines()
+    for symbol in read_symbols:
+        symbols.append(symbol.strip('\r\n'))
+    return symbols
 
 SYMBOL = "YHOO"
 
 @app.route("/", methods=['POST', 'GET'])
 def hello():
     if not len(SYMBOLS):
-        init()
+        SYMBOLS.extend(init())
     SB = SYMBOL    
     if request.method == 'POST':
         sym = request.form['symbol']
@@ -52,7 +55,7 @@ def hello():
 @app.route("/tweets", methods=['POST', 'GET'])
 def show_tweets():
     if not len(SYMBOLS):
-        init()
+        SYMBOLS.extend(init())
     SB = "AAPL"
     start_date = datetime.datetime(2015, 5, 26, 22)
     end_date = datetime.datetime(2015, 5, 27)
@@ -75,8 +78,14 @@ def get_twitter_data():
     print "Process getting twitter data started"
     twitter_manager.start_listening()
 
+def get_yahoo_data():
+    print "Process getting yahoo data started"
+    yahoo_manager.start_listening()
+
 if __name__ == "__main__":
     twitter = Process(target=get_twitter_data)
     twitter.start()
+    yahoo = Process(target=get_yahoo_data)
+    yahoo.start()
     app.debug=True 
     app.run(host= '0.0.0.0')
